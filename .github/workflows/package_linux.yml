@@ -18,11 +18,12 @@
 name: Package Linux
 
 on:
-  push:
-    branches:
-      - '**'
-      - '!dependabot/**'
-      - '!release-*'
+  # push:
+  #   branches:
+  #     - '**'
+  #     - '!dependabot/**'
+  #     - '!release-*'
+  workflow_dispatch:
     paths:
       - '.github/workflows/check_labels.yml'
       - '.github/workflows/package_linux.yml'
