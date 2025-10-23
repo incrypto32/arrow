@@ -18,45 +18,45 @@
 name: C++
 
 on:
-  # push:
-  #   branches:
-  #     - '**'
-  #     - '!dependabot/**'
-  #   tags:
-  #     - '**'
-  #   paths:
-  #     - '.dockerignore'
-  #     - '.github/workflows/cpp.yml'
-  #     - 'ci/conda_env_*'
-  #     - 'ci/docker/**'
-  #     - 'ci/scripts/ccache_setup.sh'
-  #     - 'ci/scripts/cpp_*'
-  #     - 'ci/scripts/install_azurite.sh'
-  #     - 'ci/scripts/install_gcs_testbench.sh'
-  #     - 'ci/scripts/install_minio.sh'
-  #     - 'ci/scripts/msys2_*'
-  #     - 'ci/scripts/util_*'
-  #     - 'cpp/**'
-  #     - 'docker-compose.yml'
-  #     - 'format/Flight.proto'
-  #     - 'testing'
-  # pull_request:
-  #   paths:
-  #     - '.dockerignore'
-  #     - '.github/workflows/cpp.yml'
-  #     - 'ci/conda_env_*'
-  #     - 'ci/docker/**'
-  #     - 'ci/scripts/ccache_setup.sh'
-  #     - 'ci/scripts/cpp_*'
-  #     - 'ci/scripts/install_azurite.sh'
-  #     - 'ci/scripts/install_gcs_testbench.sh'
-  #     - 'ci/scripts/install_minio.sh'
-  #     - 'ci/scripts/msys2_*'
-  #     - 'ci/scripts/util_*'
-  #     - 'cpp/**'
-  #     - 'docker-compose.yml'
-  #     - 'format/Flight.proto'
-  #     - 'testing'
+  push:
+    branches:
+      - '**'
+      - '!dependabot/**'
+    tags:
+      - '**'
+    paths:
+      - '.dockerignore'
+      - '.github/workflows/cpp.yml'
+      - 'ci/conda_env_*'
+      - 'ci/docker/**'
+      - 'ci/scripts/ccache_setup.sh'
+      - 'ci/scripts/cpp_*'
+      - 'ci/scripts/install_azurite.sh'
+      - 'ci/scripts/install_gcs_testbench.sh'
+      - 'ci/scripts/install_minio.sh'
+      - 'ci/scripts/msys2_*'
+      - 'ci/scripts/util_*'
+      - 'cpp/**'
+      - 'docker-compose.yml'
+      - 'format/Flight.proto'
+      - 'testing'
+  pull_request:
+    paths:
+      - '.dockerignore'
+      - '.github/workflows/cpp.yml'
+      - 'ci/conda_env_*'
+      - 'ci/docker/**'
+      - 'ci/scripts/ccache_setup.sh'
+      - 'ci/scripts/cpp_*'
+      - 'ci/scripts/install_azurite.sh'
+      - 'ci/scripts/install_gcs_testbench.sh'
+      - 'ci/scripts/install_minio.sh'
+      - 'ci/scripts/msys2_*'
+      - 'ci/scripts/util_*'
+      - 'cpp/**'
+      - 'docker-compose.yml'
+      - 'format/Flight.proto'
+      - 'testing'
   workflow_dispatch:
 
 concurrency:
@@ -478,6 +478,11 @@ jobs:
           PIPX_BASE_PYTHON: ${{ steps.python-install.outputs.python-path }}
         run: |
           ci/scripts/install_gcs_testbench.sh default
+      - name: Generate Windows Installer
+        shell: msys2 {0}
+        run: |
+          cd build/cpp
+          cpack
       - name: Register Flight SQL ODBC Driver
         shell: cmd
         run: |
@@ -486,3 +491,11 @@ jobs:
         shell: msys2 {0}
         run: |
           ci/scripts/cpp_test.sh "$(pwd)" "$(pwd)/build"
+      - name: Upload ODBC Driver and Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: odbc-driver-installer-${{ matrix.msystem_lower }}
+          path: |
+            build/cpp/*/libarrow_flight_sql_odbc.dll
+            build/cpp/*/Apache Arrow Flight SQL ODBC-*.msi
+          retention-days: 30
