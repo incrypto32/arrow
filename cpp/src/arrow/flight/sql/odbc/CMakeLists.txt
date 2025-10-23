@@ -60,7 +60,7 @@ if(WIN32)
 
   configure_file("install/versioninfo.rc.in" "install/versioninfo.rc" @ONLY)
 
-  list(APPEND ARROW_FLIGHT_SQL_ODBC_SRCS odbc.def install/versioninfo.rc)
+  list(APPEND ARROW_FLIGHT_SQL_ODBC_SRCS odbc.def install/versioninfo.rc odbc_impl/win_system_dsn.cc)
 endif()
 
 add_arrow_lib(arrow_flight_sql_odbc
