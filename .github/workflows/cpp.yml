@@ -57,6 +57,7 @@ on:
       - 'docker-compose.yml'
       - 'format/Flight.proto'
       - 'testing'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}
@@ -311,6 +312,7 @@ jobs:
       ARROW_FLIGHT: ON
       ARROW_FLIGHT_SQL: ON
       ARROW_FLIGHT_SQL_ODBC: ON
+      ARROW_FLIGHT_SQL_ODBC_INSTALLER: ON
       ARROW_GANDIVA: ON
       ARROW_GCS: ON
       ARROW_HDFS: OFF
@@ -389,10 +391,27 @@ jobs:
           PIPX_BASE_PYTHON: ${{ steps.python-install.outputs.python-path }}
         run: |
           ci/scripts/install_gcs_testbench.sh default
+      - name: Upload ODBC Driver DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: odbc-driver-dll-${{ matrix.msystem_lower }}
+          path: build/cpp/*/libarrow_flight_sql_odbc.dll
+          retention-days: 30
+      - name: Generate Windows Installer
+        shell: msys2 {0}
+        run: |
+          cd build/cpp/src/arrow/flight/sql/odbc
+          cpack
+      - name: Upload ODBC Installer MSI
+        uses: actions/upload-artifact@v4
+        with:
+          name: odbc-installer-msi-${{ matrix.msystem_lower }}
+          path: build/cpp/*/Apache Arrow Flight SQL ODBC-*.msi
+          retention-days: 30
       - name: Register Flight SQL ODBC Driver
         shell: cmd
         run: |
-          call "cpp\src\arrow\flight\sql\odbc\tests\install_odbc.cmd" ${{ github.workspace }}\build\cpp\%ARROW_BUILD_TYPE%\libarrow_flight_sql_odbc.dll
+          call "cpp\src\arrow\flight\sql\odbc\install\install_amd64.cmd" ${{github.workspace}}\build\cpp\%ARROW_BUILD_TYPE%\libarrow_flight_sql_odbc.dll
       - name: Test
         shell: msys2 {0}
         run: |

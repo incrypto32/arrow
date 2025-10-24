@@ -18,21 +18,22 @@
 name: Python
 
 on:
-  push:
-    branches:
-      - '**'
-      - '!dependabot/**'
-    tags:
-      - '**'
-    paths:
-      - '.dockerignore'
-      - '.github/workflows/python.yml'
-      - 'ci/**'
-      - 'cpp/**'
-      - 'docker-compose.yml'
-      - 'python/**'
-  pull_request:
-    paths:
+  # push:
+  #   branches:
+  #     - '**'
+  #     - '!dependabot/**'
+  #   tags:
+  #     - '**'
+  #   paths:
+  #     - '.dockerignore'
+  #     - '.github/workflows/python.yml'
+  #     - 'ci/**'
+  #     - 'cpp/**'
+  #     - 'docker-compose.yml'
+  #     - 'python/**'
+  # pull_request:
+  #   paths:
+  workflow_dispatch:
       - '.dockerignore'
       - '.github/workflows/python.yml'
       - 'ci/**'

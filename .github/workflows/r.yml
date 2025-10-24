@@ -18,12 +18,13 @@
 name: R
 
 on:
-  push:
-    branches:
-      - '**'
-      - '!dependabot/**'
-    tags:
-      - '**'
+  # push:
+  #   branches:
+  #     - '**'
+  #     - '!dependabot/**'
+  #   tags:
+  #     - '**'
+  workflow_dispatch:
     paths:
       - '.dockerignore'
       - ".github/workflows/r.yml"
