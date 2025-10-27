@@ -92,8 +92,17 @@ jobs:
         run: |
           export CMAKE_BUILD_PARALLEL_LEVEL=$NUMBER_OF_PROCESSORS
           ci/scripts/cpp_build.sh "$(pwd)" "$(pwd)/build"
-      - name: Generate Windows Installer
+      - name: Debug CMake Configuration
         shell: msys2 {0}
+        run: |
+          echo "=== Checking CMakeCache.txt for INSTALLER option ==="
+          grep ARROW_FLIGHT_SQL_ODBC_INSTALLER build/cpp/CMakeCache.txt || echo "Option not found in cache"
+          echo "=== Checking if CPackConfig.cmake exists ==="
+          ls -la build/cpp/src/arrow/flight/sql/odbc/CPackConfig.cmake || echo "CPackConfig.cmake NOT FOUND"
+          echo "=== Checking CPackConfig content if exists ==="
+          grep -E "CPACK_GENERATOR|CPACK_PACKAGE_NAME" build/cpp/src/arrow/flight/sql/odbc/CPackConfig.cmake 2>&1 || true
+      - name: Generate Windows Installer
+        shell: bash
         run: |
           cd build/cpp/src/arrow/flight/sql/odbc
           cpack -G WIX -C Release
