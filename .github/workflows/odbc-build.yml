@@ -123,12 +123,9 @@ jobs:
           dotnet tool install --global wix --version 5.0.2
           wix --version
       - name: Generate Windows Installer with WiX
-        shell: msys2 {0}
         run: |
           cd cpp/src/arrow/flight/sql/odbc/install
-          wix build standalone-installer.wxs \
-            -d DllPath="$(cygpath -w /d/a/arrow/arrow/build/cpp/release)" \
-            -out arrow-flight-sql-odbc.msi
+          wix build standalone-installer.wxs -d DllPath="D:\a\arrow\arrow\build\cpp\release" -out arrow-flight-sql-odbc.msi
       - name: Upload ODBC Driver and Installer
         uses: actions/upload-artifact@v4
         with:
