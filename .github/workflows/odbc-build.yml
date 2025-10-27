@@ -98,7 +98,7 @@ jobs:
             build/cpp/release/libarrow_flight_sql_odbc.dll
             build/cpp/release/*.dll
             build/cpp/src/arrow/flight/sql/odbc
-          key: odbc-build-${{ runner.os }}-${{ hashFiles('cpp/src/arrow/flight/sql/odbc/**', 'cpp/src/arrow/flight/**', 'cpp/CMakeLists.txt', 'cpp/src/arrow/CMakeLists.txt') }}
+          key: odbc-build-${{ runner.os }}-static
           restore-keys: |
             odbc-build-${{ runner.os }}-
       - name: Build ODBC Driver
