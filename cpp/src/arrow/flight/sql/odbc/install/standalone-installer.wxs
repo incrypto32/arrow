@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Apache Arrow Flight SQL ODBC"
+           Version="1.0.0"
+           Manufacturer="Apache Arrow"
+           UpgradeCode="DBF27A18-F8BF-423F-9E3A-957414D52C4B">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Apache Arrow Flight SQL ODBC" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Apache Arrow Flight SQL ODBC">
+          <Directory Id="BinFolder" Name="bin" />
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="BinFolder">
+      <!-- Main ODBC Driver -->
+      <Component Id="ODBCDriver" Guid="A1B2C3D4-E5F6-4A5B-9C8D-1E2F3A4B5C6D">
+        <File Id="arrow_flight_sql_odbc.dll"
+              Name="arrow_flight_sql_odbc.dll"
+              Source="$(var.DllPath)\arrow_flight_sql_odbc.dll"
+              KeyPath="yes" />
+      </Component>
+
+      <!-- Arrow Dependencies -->
+      <Component Id="ArrowDlls" Guid="B2C3D4E5-F6A7-4B5C-8D9E-2F3A4B5C6D7E">
+        <File Id="arrow.dll" Source="$(var.DllPath)\arrow.dll" />
+        <File Id="arrow_compute.dll" Source="$(var.DllPath)\arrow_compute.dll" />
+        <File Id="arrow_flight.dll" Source="$(var.DllPath)\arrow_flight.dll" />
+        <File Id="arrow_flight_sql.dll" Source="$(var.DllPath)\arrow_flight_sql.dll" />
+      </Component>
+
+      <!-- Other Dependencies -->
+      <Component Id="OtherDlls" Guid="C3D4E5F6-A7B8-4C5D-9E8F-3A4B5C6D7E8F">
+        <File Id="abseil_dll.dll" Source="$(var.DllPath)\abseil_dll.dll" />
+        <File Id="cares.dll" Source="$(var.DllPath)\cares.dll" />
+        <File Id="libprotobuf.dll" Source="$(var.DllPath)\libprotobuf.dll" />
+        <File Id="re2.dll" Source="$(var.DllPath)\re2.dll" />
+        <File Id="utf8proc.dll" Source="$(var.DllPath)\utf8proc.dll" />
+        <File Id="zlib1.dll" Source="$(var.DllPath)\zlib1.dll" />
+      </Component>
+
+      <!-- ODBC Registry Entries -->
+      <Component Id="ODBCRegistryEntries" Guid="C348B9F7-5E8D-415D-A001-D92F2D4EA013">
+        <RegistryValue Root='HKLM'
+                       Key='Software\ODBC\ODBCINST.INI\ODBC Drivers'
+                       Name='Apache Arrow Flight SQL ODBC Driver'
+                       Type='string'
+                       Value='Installed'
+                       KeyPath="yes" />
+
+        <RegistryKey Root="HKLM"
+                     Key="Software\ODBC\ODBCINST.INI\Apache Arrow Flight SQL ODBC Driver">
+          <RegistryValue Type="string" Name="DriverODBCVer" Value="03.00"/>
+          <RegistryValue Type="string" Name="Driver" Value="[BinFolder]arrow_flight_sql_odbc.dll"/>
+          <RegistryValue Type="string" Name="Setup" Value="[BinFolder]arrow_flight_sql_odbc.dll"/>
+          <RegistryValue Type="integer" Name="UsageCount" Value="1"/>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
