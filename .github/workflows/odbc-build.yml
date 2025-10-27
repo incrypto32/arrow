@@ -95,7 +95,7 @@ jobs:
       - name: Generate Windows Installer
         shell: msys2 {0}
         run: |
-          cd build
+          cd build/cpp/src/arrow/flight/sql/odbc
           cpack
       - name: Upload ODBC Driver and Installer
         uses: actions/upload-artifact@v4
