@@ -18,14 +18,15 @@
 name: Dev
 
 on:
+  workflow_dispatch:
   # always trigger except Dependabot "push"
-  push:
+  # push:
     branches:
       - '**'
       - '!dependabot/**'
     tags:
       - '**'
-  pull_request:
+  # pull_request:
 
 concurrency:
   group: ${{ github.repository }}-${{ github.head_ref || github.sha }}-${{ github.workflow }}

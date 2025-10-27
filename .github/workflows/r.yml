@@ -18,7 +18,8 @@
 name: R
 
 on:
-  push:
+  workflow_dispatch:
+  # push:
     branches:
       - '**'
       - '!dependabot/**'
@@ -36,7 +37,7 @@ on:
       - "cpp/**"
       - "docker-compose.yml"
       - "r/**"
-  pull_request:
+  # pull_request:
     paths:
       - '.dockerignore'
       - ".github/workflows/r.yml"

@@ -18,7 +18,8 @@
 name: MATLAB
 
 on:
-  push:
+  workflow_dispatch:
+  # push:
     branches:
       - '**'
       - '!dependabot/**'
@@ -29,7 +30,7 @@ on:
       - 'ci/scripts/matlab*.sh'
       - 'matlab/**'
       - 'cpp/src/arrow/**'
-  pull_request:
+  # pull_request:
     paths:
       - '.github/workflows/matlab.yml'
       - 'ci/scripts/matlab*.sh'

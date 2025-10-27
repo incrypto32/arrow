@@ -18,7 +18,8 @@
 name: C++ Extra
 
 on:
-  push:
+  workflow_dispatch:
+  # push:
     branches:
       - '**'
       - '!dependabot/**'
@@ -40,7 +41,7 @@ on:
       - 'testing'
     tags:
       - '**'
-  pull_request:
+  # pull_request:
     paths:
       - '.dockerignore'
       - '.github/workflows/cpp_extra.yml'

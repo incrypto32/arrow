@@ -18,7 +18,8 @@
 name: C GLib & Ruby
 
 on:
-  push:
+  workflow_dispatch:
+  # push:
     branches:
       - '**'
       - '!dependabot/**'
@@ -38,7 +39,7 @@ on:
       - 'cpp/**'
       - 'docker-compose.yml'
       - 'ruby/**'
-  pull_request:
+  # pull_request:
     paths:
       - '.dockerignore'
       - '.github/workflows/ruby.yml'
