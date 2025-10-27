@@ -31,13 +31,11 @@
   </Package>
 
   <Fragment>
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFiles64Folder">
-        <Directory Id="INSTALLFOLDER" Name="Apache Arrow Flight SQL ODBC">
-          <Directory Id="BinFolder" Name="bin" />
-        </Directory>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Apache Arrow Flight SQL ODBC">
+        <Directory Id="BinFolder" Name="bin" />
       </Directory>
-    </Directory>
+    </StandardDirectory>
   </Fragment>
 
   <Fragment>
