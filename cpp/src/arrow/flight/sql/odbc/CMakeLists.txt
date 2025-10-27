@@ -111,6 +111,7 @@ foreach(LIB_TARGET ${ARROW_FLIGHT_SQL_ODBC_LIBRARIES})
 endforeach()
 
 # Construct ODBC Windows installer. Only Release installer is supported
+message(STATUS "ARROW_FLIGHT_SQL_ODBC_INSTALLER value: '${ARROW_FLIGHT_SQL_ODBC_INSTALLER}'")
 if(ARROW_FLIGHT_SQL_ODBC_INSTALLER)
 
   include(InstallRequiredSystemLibraries)
