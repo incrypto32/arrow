@@ -24,6 +24,8 @@ on:
     paths:
       - 'cpp/src/arrow/flight/sql/odbc/**'
       - '.github/workflows/odbc-build.yml'
+      - 'cpp/cmake_modules/DefineOptions.cmake'
+      - 'ci/scripts/cpp_build.sh'
   workflow_dispatch:
 
 permissions:
