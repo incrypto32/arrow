@@ -92,7 +92,7 @@ jobs:
           restore-keys: cpp-ccache-mingw64-
       - name: Cache ODBC Build Output
         id: cache-odbc
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             build/cpp/release/libarrow_flight_sql_odbc.dll
@@ -107,6 +107,15 @@ jobs:
         run: |
           export CMAKE_BUILD_PARALLEL_LEVEL=$NUMBER_OF_PROCESSORS
           ci/scripts/cpp_build.sh "$(pwd)" "$(pwd)/build"
+      - name: Save ODBC Build Cache
+        if: steps.cache-odbc.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            build/cpp/release/libarrow_flight_sql_odbc.dll
+            build/cpp/release/*.dll
+            build/cpp/src/arrow/flight/sql/odbc
+          key: odbc-build-${{ runner.os }}-static
       - name: Generate Windows Installer
         shell: msys2 {0}
         run: |
