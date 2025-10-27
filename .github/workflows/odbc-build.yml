@@ -96,7 +96,7 @@ jobs:
         shell: cmd
         run: |
           cd build\cpp\src\arrow\flight\sql\odbc
-          cpack -G WIX -C Release
+          cpack
       - name: Upload ODBC Driver and Installer
         uses: actions/upload-artifact@v4
         with:
