@@ -118,6 +118,10 @@ jobs:
             build/cpp/release/*.dll
             build/cpp/src/arrow/flight/sql/odbc
           key: odbc-build-${{ runner.os }}-with-cpack-config
+      - name: List build directory
+        run: |
+          dir build\cpp\
+          dir build\cpp\Release\ 2>$null || dir build\cpp\release\ 2>$null || echo "No Release or release directory found"
       - name: Install WiX Toolset
         run: |
           dotnet tool install --global wix --version 5.0.2
@@ -125,12 +129,12 @@ jobs:
       - name: Generate Windows Installer with WiX
         run: |
           cd cpp/src/arrow/flight/sql/odbc/install
-          wix build standalone-installer.wxs -d DllPath="D:\a\arrow\arrow\build\cpp\release" -out arrow-flight-sql-odbc.msi
+          wix build standalone-installer.wxs -d DllPath="D:\a\arrow\arrow\build\cpp\Release" -out arrow-flight-sql-odbc.msi
       - name: Upload ODBC Driver and Installer
         uses: actions/upload-artifact@v4
         with:
           name: odbc-driver-and-installer
           path: |
-            build/cpp/release/arrow_flight_sql_odbc.dll
+            build/cpp/Release/*.dll
             cpp/src/arrow/flight/sql/odbc/install/arrow-flight-sql-odbc.msi
           retention-days: 30
