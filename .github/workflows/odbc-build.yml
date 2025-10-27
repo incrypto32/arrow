@@ -98,7 +98,7 @@ jobs:
             build/cpp/release/libarrow_flight_sql_odbc.dll
             build/cpp/release/*.dll
             build/cpp/src/arrow/flight/sql/odbc
-          key: odbc-build-${{ runner.os }}-static
+          key: odbc-build-${{ runner.os }}-installer-enabled
           restore-keys: |
             odbc-build-${{ runner.os }}-
       - name: Build ODBC Driver
@@ -115,7 +115,7 @@ jobs:
             build/cpp/release/libarrow_flight_sql_odbc.dll
             build/cpp/release/*.dll
             build/cpp/src/arrow/flight/sql/odbc
-          key: odbc-build-${{ runner.os }}-static
+          key: odbc-build-${{ runner.os }}-installer-enabled
       - name: Generate Windows Installer
         shell: msys2 {0}
         run: |
