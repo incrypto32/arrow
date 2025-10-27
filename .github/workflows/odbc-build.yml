@@ -95,8 +95,8 @@ jobs:
       - name: Generate Windows Installer
         shell: msys2 {0}
         run: |
-          cd build/cpp/src/arrow/flight/sql/odbc
-          cpack
+          cd build
+          cpack -G WIX -C Release
       - name: Upload ODBC Driver and Installer
         uses: actions/upload-artifact@v4
         with:
