@@ -19,7 +19,7 @@ name: C++
 
 on:
   workflow_dispatch:
-  # push:
+  push:
     branches:
       - '**'
       - '!dependabot/**'
@@ -455,6 +455,29 @@ jobs:
         run: |
           export CMAKE_BUILD_PARALLEL_LEVEL=$NUMBER_OF_PROCESSORS
           ci/scripts/cpp_build.sh "$(pwd)" "$(pwd)/build"
+      - name: Debug ODBC Installer Configuration
+        shell: msys2 {0}
+        run: |
+          echo "=== ODBC Installer Build Check ==="
+          echo "INSTALLER option in cache:"
+          grep ARROW_FLIGHT_SQL_ODBC_INSTALLER build/cpp/CMakeCache.txt || echo "Not found"
+          echo ""
+          echo "CPackConfig.cmake exists:"
+          ls -lh build/cpp/src/arrow/flight/sql/odbc/CPackConfig.cmake 2>/dev/null || echo "Not found"
+          echo ""
+          echo "Available DLLs:"
+          ls -lh build/cpp/release/*.dll 2>/dev/null || ls -lh build/cpp/Release/*.dll 2>/dev/null || echo "No DLLs found"
+      - name: Generate ODBC MSI Installer
+        shell: msys2 {0}
+        run: |
+          cd build/cpp/src/arrow/flight/sql/odbc
+          cpack -C Release
+      - name: Upload ODBC MSI Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: odbc-msi-installer-${{ matrix.msystem_lower }}
+          path: build/cpp/src/arrow/flight/sql/odbc/*.msi
+          retention-days: 7
       - name: Download Timezone Database
         shell: bash
         run: ci/scripts/download_tz_database.sh
