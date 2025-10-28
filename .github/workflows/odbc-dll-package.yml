@@ -91,13 +91,32 @@ jobs:
         run: |
           export CMAKE_BUILD_PARALLEL_LEVEL=$NUMBER_OF_PROCESSORS
           ci/scripts/cpp_build.sh "$(pwd)" "$(pwd)/build"
+      - name: List Available DLLs
+        shell: msys2 {0}
+        run: |
+          echo "=== All DLLs in build/cpp/Release ==="
+          ls -lh build/cpp/Release/*.dll
+          echo ""
+          echo "=== Total DLL count ==="
+          ls -1 build/cpp/Release/*.dll | wc -l
       - name: Package DLLs
         shell: msys2 {0}
         run: |
           mkdir -p odbc-dlls
+
+          # Copy all DLLs from Release directory
           cp build/cpp/Release/*.dll odbc-dlls/
+
+          # Also check if DLLs are in other locations
+          find build/cpp -name "*.dll" -type f -exec cp {} odbc-dlls/ \; 2>/dev/null || true
+
           cp cpp/src/arrow/flight/sql/odbc/install/install_amd64.cmd odbc-dlls/
-          ls -lh odbc-dlls/
+
+          echo "=== DLLs in package ==="
+          ls -lh odbc-dlls/*.dll
+          echo ""
+          echo "=== Total packaged ==="
+          ls -1 odbc-dlls/*.dll | wc -l
       - name: Create ZIP
         shell: pwsh
         run: Compress-Archive -Path odbc-dlls\* -DestinationPath arrow-odbc-dlls.zip
