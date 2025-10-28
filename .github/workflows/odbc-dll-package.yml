@@ -1,0 +1,109 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: ODBC DLL Package
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ARCHERY_DEBUG: 1
+  ARROW_ENABLE_TIMING_TESTS: OFF
+
+jobs:
+  package-odbc-dlls:
+    name: Package ODBC DLLs
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      ARROW_BUILD_SHARED: ON
+      ARROW_BUILD_STATIC: OFF
+      ARROW_BUILD_TESTS: OFF
+      ARROW_BUILD_TYPE: release
+      ARROW_FLIGHT: ON
+      ARROW_FLIGHT_SQL: ON
+      ARROW_FLIGHT_SQL_ODBC: ON
+      ARROW_HOME: /mingw64
+      ARROW_COMPUTE: ON
+      ARROW_DATASET: OFF
+      ARROW_GANDIVA: OFF
+      ARROW_GCS: OFF
+      ARROW_HDFS: OFF
+      ARROW_JEMALLOC: OFF
+      ARROW_PARQUET: OFF
+      ARROW_S3: OFF
+      ARROW_SUBSTRAIT: OFF
+      ARROW_USE_GLOG: OFF
+      ARROW_VERBOSE_THIRDPARTY_BUILD: OFF
+      ARROW_WITH_OPENTELEMETRY: OFF
+      ARROW_CMAKE_ARGS: >-
+        -DARROW_PACKAGE_PREFIX=/mingw64
+        -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
+    steps:
+      - name: Disable Crash Dialogs
+        run: |
+          reg add `
+            "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
+            /v DontShowUI `
+            /t REG_DWORD `
+            /d 1 `
+            /f
+      - name: Checkout Arrow
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+      - name: Setup MSYS2
+        shell: msys2 {0}
+        run: ci/scripts/msys2_setup.sh cpp
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ccache
+          key: cpp-ccache-mingw64-${{ hashFiles('cpp/**') }}
+          restore-keys: cpp-ccache-mingw64-
+      - name: Build ODBC Driver
+        shell: msys2 {0}
+        run: |
+          export CMAKE_BUILD_PARALLEL_LEVEL=$NUMBER_OF_PROCESSORS
+          ci/scripts/cpp_build.sh "$(pwd)" "$(pwd)/build"
+      - name: Package DLLs
+        shell: msys2 {0}
+        run: |
+          mkdir -p odbc-dlls
+          cp build/cpp/Release/*.dll odbc-dlls/
+          cp cpp/src/arrow/flight/sql/odbc/install/install_amd64.cmd odbc-dlls/
+          ls -lh odbc-dlls/
+      - name: Create ZIP
+        shell: pwsh
+        run: Compress-Archive -Path odbc-dlls\* -DestinationPath arrow-odbc-dlls.zip
+      - name: Upload Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: arrow-odbc-dlls
+          path: arrow-odbc-dlls.zip
+          retention-days: 30
